@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #f0f9ff;
+    --text-primary: #1e293b;
+  }
+}
+
+/* Yüksek Kontrast Temaları */
+.theme-contrast-yellow {
+  --bg-primary: #000000;
+  --text-primary: #ffff00;
+  background-color: #000000 !important;
+  color: #ffff00 !important;
+}
+
+.theme-contrast-yellow * {
+  border-color: #ffff00 !important;
+}
+
+.theme-contrast-blue {
+  --bg-primary: #0f172a;
+  --text-primary: #38bdf8;
+  background-color: #0b1329 !important;
+  color: #ffffff !important;
+}
+
+/* Erişilebilir odaklanma ve buton stilleri */
+*:focus-visible {
+  outline: 4px solid #f59e0b !important;
+  outline-offset: 4px !important;
+}
+
+/* Tablet ve Tahtalar için yumuşak dokunmatik hissi */
+.touch-friendly {
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
