@@ -1,369 +1,265 @@
-import type { Mascot, WorldInfo, BadgeItem, UDAReport } from '../types';
+import type {
+  ShadowItem,
+  WheelTask,
+  DragItem,
+  TargetBox,
+  MapLevel,
+  ScratchBlockDef,
+  BEPStat,
+} from '../types';
 
-export const MASCOTS: Mascot[] = [
+// Wordwall 1.1: Gölgesini Bulma Oyunu İlk Verileri
+export const INITIAL_SHADOW_ITEMS: ShadowItem[] = [
   {
-    id: 'robi',
-    name: 'Robot Robi',
-    subtitle: 'Teknoloji Dostu Robot',
-    avatarEmoji: '🤖',
-    svgColor: 'from-blue-500 to-indigo-600',
-    greeting: 'Merhaba arkadaşım! Ben Robot Robi. MEB Bilişim Macerası dersine hazır mısın?',
-    encouragement: [
-      'Harika bir deneme! Birlikte tekrar yapabiliriz.',
-      'Neredeyse oluyordu! Bir kez daha dene, sana güveniyorum.',
-      'Çok iyi odaklandın! Teknoloji seninle daha eğlenceli.',
-      'Süpersin! Adım adım hedefe yaklaşıyoruz.'
-    ]
-  },
-  {
-    id: 'owl',
-    name: 'Bilge Baykuş',
-    subtitle: 'Akıllı ve Sabırlı Rehber',
-    avatarEmoji: '🦉',
-    svgColor: 'from-emerald-500 to-teal-600',
-    greeting: 'Hoş geldin küçük kaşif! Ben Bilge Baykuş. Yeni bilgiler öğrenmek çok keyifli!',
-    encouragement: [
-      'Sabırla denemeye devam et, öğrenmenin sırrı burada!',
-      'Neredeyse başarmıştın! Şimdi daha dikkatli bir kez daha.',
-      'Bilgi bir hazinedir, sen de çok parlak bir kaşifsin.',
-      'Tebrikler! Düşündün ve harika bir adım attın.'
-    ]
-  },
-  {
-    id: 'star',
-    name: 'Neşeli Yıldız',
-    subtitle: 'Enerjik ve Parlayan Arkadaş',
-    avatarEmoji: '⭐',
-    svgColor: 'from-amber-400 to-orange-500',
-    greeting: 'Selam yıldızım! Ben Neşeli Yıldız. Bugün ekran başında ışıl ışıl parlayacağız!',
-    encouragement: [
-      'Gülümse ve devam et! Işığın parıldıyor!',
-      'Hiç sorun değil, tekrar denemek oyunun en heyecanlı kısmı!',
-      'Vay canına, harika bir adım! Bir daha dene!',
-      'Gözlerindeki neşe bana güç veriyor! Sen yaparsın!'
-    ]
-  }
-];
-
-export const INITIAL_WORLDS: WorldInfo[] = [
-  {
-    id: 1,
-    udaCode: 'UDA 1',
-    name: '1. Modül: Geçmişten Günümüze Bilişim',
-    tagline: 'Zaman makinesiyle dünden bugüne teknolojiyi ve kullanım alanlarını keşfet!',
-    emoji: '⏳',
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-300',
-    accentColor: 'text-amber-800',
-    isUnlocked: true,
-    levels: [
-      {
-        id: 'w1-l1',
-        worldId: 1,
-        number: 1,
-        title: 'Zaman Makinesi (Eski vs Yeni)',
-        description: 'Eski teknolojiler ile günümüzün modern araçlarını eşleştir.',
-        iconName: 'History',
-        stars: 3,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-time-machine'
-      },
-      {
-        id: 'w1-l2',
-        worldId: 1,
-        number: 2,
-        title: 'Kullanım Alanı Sepeti',
-        description: 'Teknolojileri Hastane, Okul ve Banka sepetlerine doğru ayır.',
-        iconName: 'Building2',
-        stars: 2,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-time-machine'
-      },
-      {
-        id: 'w1-l3',
-        worldId: 1,
-        number: 3,
-        title: 'Yazılım ve Donanım Çarkı',
-        description: 'Elle tutulan donanımlar ile ekrandaki yazılımları tanı.',
-        iconName: 'Sparkles',
-        stars: 0,
-        isCompleted: false,
-        isLocked: false,
-        targetScreen: 'game-time-machine'
-      }
-    ]
-  },
-  {
-    id: 2,
-    udaCode: 'UDA 2',
-    name: '2. Modül: Bilgisayar Sistemleri ve Bileşenleri',
-    tagline: 'Bilgisayar parçalarını birleştir, girdi ve çıktı birimlerini tanı!',
+    id: 'monitor',
+    name: 'Monitör / Ekran',
     emoji: '🖥️',
-    bgColor: 'bg-emerald-50',
-    borderColor: 'border-emerald-300',
-    accentColor: 'text-emerald-700',
-    isUnlocked: true,
-    levels: [
-      {
-        id: 'w2-l1',
-        worldId: 2,
-        number: 1,
-        title: 'Donanım Yapbozu',
-        description: 'Monitör, kasa, klavye ve fareyi çalışma masasına yerleştir.',
-        iconName: 'Monitor',
-        stars: 3,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-hardware'
-      },
-      {
-        id: 'w2-l2',
-        worldId: 2,
-        number: 2,
-        title: 'Girdi mi Çıktı mı?',
-        description: 'Kamera, yazıcı, mikrofon ve ekranı doğru sepetlere taşı.',
-        iconName: 'ArrowLeftRight',
-        stars: 2,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-input-output'
-      },
-      {
-        id: 'w2-l3',
-        worldId: 2,
-        number: 3,
-        title: 'Klavye Harf Avı',
-        description: 'Süzülen harf balonlarına basarak klavye reflekslerini geliştir.',
-        iconName: 'Sparkles',
-        stars: 3,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-keyboard'
-      }
-    ]
+    color: 'from-blue-400 to-indigo-500',
+    shadowSilhouetteId: 'monitor',
   },
   {
-    id: 3,
-    udaCode: 'UDA 3',
-    name: '3. Modül: Görsel Düzenleme ve Dijital Çizim',
-    tagline: 'Dev fırçalar, renk paletleri ve damgalarla yaratıcılığını konuştur!',
-    emoji: '🎨',
-    bgColor: 'bg-purple-50',
-    borderColor: 'border-purple-300',
-    accentColor: 'text-purple-800',
-    isUnlocked: true,
-    levels: [
-      {
-        id: 'w3-l1',
-        worldId: 3,
-        number: 1,
-        title: 'Erişilebilir Dijital Tuval',
-        description: 'Sesli renk seçici, dev fırçalar ve eğlenceli damgalarla boya.',
-        iconName: 'Palette',
-        stars: 3,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-digital-canvas'
-      },
-      {
-        id: 'w3-l2',
-        worldId: 3,
-        number: 2,
-        title: 'Arayüz Araçları Eşleştirme',
-        description: 'Fırça, silgi, renk paleti simgelerini doğru görevle eşleştir.',
-        iconName: 'Layers',
-        stars: 2,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-digital-canvas'
-      },
-      {
-        id: 'w3-l3',
-        worldId: 3,
-        number: 3,
-        title: 'Dijital Sanatçı Rozeti',
-        description: 'Kendi resmini çizip bilgisayarına başarıyla kaydet.',
-        iconName: 'Award',
-        stars: 0,
-        isCompleted: false,
-        isLocked: false,
-        targetScreen: 'game-digital-canvas'
-      }
-    ]
+    id: 'keyboard',
+    name: 'Klavye',
+    emoji: '⌨️',
+    color: 'from-amber-400 to-orange-500',
+    shadowSilhouetteId: 'keyboard',
   },
   {
-    id: 4,
-    udaCode: 'UDA 4',
-    name: '4. Modül: Bilgisayar Ağları ve İnternet',
-    tagline: 'Cihazları modeme bağla, Wi-Fi sinyallerini takip et ve güvenle gezin!',
-    emoji: '🌐',
-    bgColor: 'bg-sky-50',
-    borderColor: 'border-sky-300',
-    accentColor: 'text-sky-800',
-    isUnlocked: true,
-    levels: [
-      {
-        id: 'w4-l1',
-        worldId: 4,
-        number: 1,
-        title: 'Ağ Kurma & Wi-Fi Sinyal Takibi',
-        description: 'Bilgisayar, tablet ve telefonu modeme bağlayıp interneti aç.',
-        iconName: 'Wifi',
-        stars: 3,
-        isCompleted: true,
-        isLocked: false,
-        targetScreen: 'game-network-builder'
-      },
-      {
-        id: 'w4-l2',
-        worldId: 4,
-        number: 2,
-        title: 'Güvenli İnternet ve Şifre',
-        description: 'Güçlü şifre kurallarını öğren, sanal kaleyi güvene al.',
-        iconName: 'ShieldCheck',
-        stars: 0,
-        isCompleted: false,
-        isLocked: false,
-        targetScreen: 'game-network-builder'
-      },
-      {
-        id: 'w4-l3',
-        worldId: 4,
-        number: 3,
-        title: 'Siber Kahraman Rozeti',
-        description: 'Ağ müfredatını tamamla ve MEB katılım belgesini hak et!',
-        iconName: 'Award',
-        stars: 0,
-        isCompleted: false,
-        isLocked: true
-      }
-    ]
-  }
+    id: 'mouse',
+    name: 'Fare (Mouse)',
+    emoji: '🖱️',
+    color: 'from-emerald-400 to-teal-500',
+    shadowSilhouetteId: 'mouse',
+  },
+  {
+    id: 'apple',
+    name: 'Elma',
+    emoji: '🍎',
+    color: 'from-rose-400 to-red-500',
+    shadowSilhouetteId: 'apple',
+  },
+  {
+    id: 'headphones',
+    name: 'Kulaklık',
+    emoji: '🎧',
+    color: 'from-purple-400 to-violet-500',
+    shadowSilhouetteId: 'headphones',
+  },
+  {
+    id: 'laptop',
+    name: 'Dizüstü Bilgisayar',
+    emoji: '💻',
+    color: 'from-sky-400 to-blue-600',
+    shadowSilhouetteId: 'laptop',
+  },
 ];
 
-export const INITIAL_UDA_REPORTS: UDAReport[] = [
+// Wordwall 1.2: Şans Çarkıfeleği Görevleri
+export const INITIAL_WHEEL_TASKS: WheelTask[] = [
+  {
+    id: 'task-fruits',
+    title: 'Meyveleri Sepete Taşı',
+    icon: '🍎',
+    color: '#f87171', // pastel rose
+    rewardStars: 1,
+  },
+  {
+    id: 'task-keyboard',
+    title: 'Klavyede Boşluk Tuşuna Bas',
+    icon: '⌨️',
+    color: '#60a5fa', // pastel blue
+    rewardStars: 1,
+  },
+  {
+    id: 'task-mouse',
+    title: 'Fareyi Hareket Ettir',
+    icon: '🖱️',
+    color: '#34d399', // pastel emerald
+    rewardStars: 1,
+  },
+  {
+    id: 'task-screen',
+    title: 'Ekrana Gülümse ve Dokun',
+    icon: '🖥️',
+    color: '#fbbf24', // pastel amber
+    rewardStars: 1,
+  },
+  {
+    id: 'task-music',
+    title: 'Neşeli Müziği Dinle',
+    icon: '🎧',
+    color: '#c084fc', // pastel purple
+    rewardStars: 1,
+  },
+  {
+    id: 'task-robot',
+    title: 'Robot Robi\'ye El Salla',
+    icon: '🤖',
+    color: '#38bdf8', // pastel sky
+    rewardStars: 1,
+  },
+];
+
+// Wordwall 1.3: Sürükle-Bırak Eşleştirme Öğeleri
+export const INITIAL_DRAG_ITEMS: DragItem[] = [
+  {
+    id: 'drag-monitor',
+    name: 'Monitör (Ekran)',
+    icon: '🖥️',
+    targetCategory: 'monitor_slot',
+    color: 'bg-blue-100 border-blue-400 text-blue-900',
+  },
+  {
+    id: 'drag-keyboard',
+    name: 'Klavye',
+    icon: '⌨️',
+    targetCategory: 'keyboard_slot',
+    color: 'bg-amber-100 border-amber-400 text-amber-900',
+  },
+  {
+    id: 'drag-mouse',
+    name: 'Fare (Mouse)',
+    icon: '🖱️',
+    targetCategory: 'mouse_slot',
+    color: 'bg-emerald-100 border-emerald-400 text-emerald-900',
+  },
+];
+
+// Wordwall 1.3: Hedef Yuva / Kutular
+export const INITIAL_TARGET_BOXES: TargetBox[] = [
+  {
+    id: 'box-monitor',
+    category: 'monitor_slot',
+    title: 'Monitör Yuvası',
+    icon: '🖥️',
+    color: 'border-blue-300 bg-blue-50/60',
+  },
+  {
+    id: 'box-keyboard',
+    category: 'keyboard_slot',
+    title: 'Klavye Yuvası',
+    icon: '⌨️',
+    color: 'border-amber-300 bg-amber-50/60',
+  },
+  {
+    id: 'box-mouse',
+    category: 'mouse_slot',
+    title: 'Fare Yuvası',
+    icon: '🖱️',
+    color: 'border-emerald-300 bg-emerald-50/60',
+  },
+];
+
+// Modül 2 & 3: Başlangıç Seviye Haritaları (5x5 Grid)
+export const INITIAL_MAP_LEVELS: MapLevel[] = [
+  {
+    id: 'level-1',
+    title: '1. Adım: Düz Yol (Sağa Git)',
+    gridSize: 5,
+    start: { x: 0, y: 2 },
+    target: { x: 4, y: 2 },
+    obstacles: [],
+  },
+  {
+    id: 'level-2',
+    title: '2. Adım: Köşeyi Dön',
+    gridSize: 5,
+    start: { x: 0, y: 0 },
+    target: { x: 4, y: 4 },
+    obstacles: [
+      { x: 2, y: 0 },
+      { x: 2, y: 1 },
+      { x: 2, y: 2 },
+    ],
+  },
+  {
+    id: 'level-3',
+    title: '3. Adım: Engeli Aş',
+    gridSize: 5,
+    start: { x: 0, y: 2 },
+    target: { x: 4, y: 2 },
+    obstacles: [
+      { x: 2, y: 2 }, // Bu engel zıplama bloğu 🦘 ile geçilebilir!
+    ],
+  },
+];
+
+// Modül 3: ScratchJr Blok Kütüphanesi Tanımları
+export const SCRATCH_BLOCK_DEFS: ScratchBlockDef[] = [
+  {
+    type: 'start',
+    label: 'Başlat',
+    symbol: '🟢',
+    bgColor: 'bg-emerald-500 hover:bg-emerald-600',
+    borderColor: 'border-emerald-600',
+    textColor: 'text-white',
+  },
+  {
+    type: 'right',
+    label: 'Sağ',
+    symbol: '➡️',
+    bgColor: 'bg-sky-500 hover:bg-sky-600',
+    borderColor: 'border-sky-600',
+    textColor: 'text-white',
+  },
+  {
+    type: 'left',
+    label: 'Sol',
+    symbol: '⬅️',
+    bgColor: 'bg-sky-500 hover:bg-sky-600',
+    borderColor: 'border-sky-600',
+    textColor: 'text-white',
+  },
+  {
+    type: 'up',
+    label: 'Yukarı',
+    symbol: '⬆️',
+    bgColor: 'bg-indigo-500 hover:bg-indigo-600',
+    borderColor: 'border-indigo-600',
+    textColor: 'text-white',
+  },
+  {
+    type: 'down',
+    label: 'Aşağı',
+    symbol: '⬇️',
+    bgColor: 'bg-indigo-500 hover:bg-indigo-600',
+    borderColor: 'border-indigo-600',
+    textColor: 'text-white',
+  },
+  {
+    type: 'jump',
+    label: 'Zıpla',
+    symbol: '🦘',
+    bgColor: 'bg-amber-500 hover:bg-amber-600',
+    borderColor: 'border-amber-600',
+    textColor: 'text-white',
+  },
+];
+
+// MEB Bilişim BEP Kazanımları İstatistik Şablonu
+export const INITIAL_BEP_STATS: BEPStat[] = [
   {
     code: 'UDA 1',
-    title: 'Bilişim Teknolojileri ve Değişim',
-    learningOutcome: 'Geçmişten günümüze teknolojileri karşılaştırır, kullanım alanlarına göre sınıflandırır.',
-    attempts: 5,
-    successes: 4,
-    targetCriteria: '3/5 Ölçütü (En az %60 Başarı)',
-    status: 'achieved',
-    notes: 'Zaman makinesi eşleştirmesinde 4/5 başarı sağlandı. Çevirmeli telefon ve daktilo dönüşümünü kavradı.',
+    title: 'Bilişim Teknolojileri Donanım ve Nesne Tanıma',
+    bepOutcome: 'Görsel nesnelerin silüetini ve donanım parçalarını doğru eşleştirir.',
+    successCount: 3,
+    attemptCount: 3,
+    criterionMet: true,
   },
   {
     code: 'UDA 2',
-    title: 'Bilgisayar Sistemleri ve Bileşenleri',
-    learningOutcome: 'Bilgisayar donanım parçalarını tanır, girdi ve çıktı birimlerini doğru ayırt eder.',
-    attempts: 5,
-    successes: 5,
-    targetCriteria: '3/5 Ölçütü (En az %60 Başarı)',
-    status: 'achieved',
-    notes: 'Donanım yapbozunu hatasız tamamladı. Girdi ve çıktı sepetlerini sesli yönergelerle doğru gruplandırdı.',
+    title: 'Yön Algısı ve Mekânsal Konumlandırma',
+    bepOutcome: 'Ekrandaki karakteri 4 ana yönde (Yukarı, Aşağı, Sol, Sağ) hedefe ulaştırır.',
+    successCount: 2,
+    attemptCount: 2,
+    criterionMet: true,
   },
   {
     code: 'UDA 3',
-    title: 'Görsel Düzenleme ve Dijital Çizim',
-    learningOutcome: 'Görsel düzenleme araçlarını (fırça, silgi, renk paleti) kullanarak temel dijital çizimler oluşturur.',
-    attempts: 4,
-    successes: 3,
-    targetCriteria: '3/5 Ölçütü (En az %60 Başarı)',
-    status: 'achieved',
-    notes: 'Renk paletinden sesli dönüt alarak istediği renkleri seçti, fırça ve damgalarla özgün kompozisyon üretti.',
+    title: 'Simgesel Kodlama ve Algoritmik Sıralama (ScratchJr)',
+    bepOutcome: 'Başlat bayrağı ve yön/zıplama bloklarını mantıksal sıraya dizerek çalıştırır.',
+    successCount: 1,
+    attemptCount: 1,
+    criterionMet: false,
   },
-  {
-    code: 'UDA 4',
-    title: 'Bilgisayar Ağları ve İnternet Sorgulama',
-    learningOutcome: 'Cihazlar arası kablosuz ağ (Wi-Fi) bağlantısı kurar, internet ve sinyal akış mantığını kavrar.',
-    attempts: 5,
-    successes: 3,
-    targetCriteria: '3/5 Ölçütü (En az %60 Başarı)',
-    status: 'achieved',
-    notes: 'Modem ile cihazlar arasındaki bağlantı yollarını başarıyla birleştirdi. Sinyal akışını takip etti.',
-  },
-];
-
-export const INITIAL_BADGES: BadgeItem[] = [
-  {
-    id: 'badge-welcome',
-    title: 'Maceracı Başlangıcı',
-    description: 'Bilişim Macerası portalına ilk adımı attın.',
-    emoji: '🚀',
-    isUnlocked: true,
-    unlockedAt: 'İlk Oturum',
-    category: 'master'
-  },
-  {
-    id: 'badge-history',
-    title: 'Zaman Yolcusu',
-    description: 'UDA 1: Geçmişten günümüze teknolojileri başarıyla eşleştirdin.',
-    emoji: '⏳',
-    isUnlocked: true,
-    unlockedAt: '1. Modül',
-    category: 'history'
-  },
-  {
-    id: 'badge-hardware',
-    title: 'Donanım Mimarı',
-    description: 'UDA 2: Bilgisayar parçalarını ve girdi/çıktı birimlerini doğru grupladın.',
-    emoji: '🖥️',
-    isUnlocked: true,
-    unlockedAt: '2. Modül',
-    category: 'hardware'
-  },
-  {
-    id: 'badge-art',
-    title: 'Dijital Ressam',
-    description: 'UDA 3: Görsel düzenleme araçlarıyla ilk dijital eserini ürettin.',
-    emoji: '🎨',
-    isUnlocked: true,
-    unlockedAt: '3. Modül',
-    category: 'art'
-  },
-  {
-    id: 'badge-network',
-    title: 'Ağ Ustası',
-    description: 'UDA 4: Cihazları modeme bağlayıp internet ağını kurdun.',
-    emoji: '📶',
-    isUnlocked: true,
-    unlockedAt: '4. Modül',
-    category: 'network'
-  },
-  {
-    id: 'badge-keyboard',
-    title: 'Harf Avcısı',
-    description: 'Klavye vadisinde uçan harf balonlarını patlattın.',
-    emoji: '🎯',
-    isUnlocked: true,
-    unlockedAt: 'Klavye Dersi',
-    category: 'keyboard'
-  },
-  {
-    id: 'badge-resilience',
-    title: 'Azimli Şampiyon',
-    description: 'Pes etmeden tekrar deneyerek 3/5 hedefine ulaştın.',
-    emoji: '💪',
-    isUnlocked: true,
-    unlockedAt: 'Özel Eğitim',
-    category: 'master'
-  },
-  {
-    id: 'badge-voice',
-    title: 'Sesli Komutan',
-    description: 'Sesli komutları kullanarak portalı eller serbest yönettin.',
-    emoji: '🎙️',
-    isUnlocked: false,
-    category: 'accessibility'
-  },
-  {
-    id: 'badge-gesture',
-    title: 'Sanal El Büyücüsü',
-    description: 'Kamera ve sanal imleç ile duraklayarak (dwell-click) işlem yaptın.',
-    emoji: '✨',
-    isUnlocked: false,
-    category: 'accessibility'
-  }
 ];

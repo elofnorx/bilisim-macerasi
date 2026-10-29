@@ -1,90 +1,35 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import confetti from 'canvas-confetti';
 import type {
-  MascotId,
-  Mascot,
-  InputMode,
+  ActiveTab,
   ThemeMode,
-  FontSize,
-  ScreenType,
-  WorldInfo,
-  BadgeItem,
-  StudentSession,
+  ShadowItem,
+  MapLevel,
+  BEPStat,
 } from '../types';
-import { MASCOTS, INITIAL_WORLDS, INITIAL_BADGES, INITIAL_UDA_REPORTS } from '../data/initialData';
+import {
+  INITIAL_SHADOW_ITEMS,
+  INITIAL_MAP_LEVELS,
+  INITIAL_BEP_STATS,
+} from '../data/initialData';
 import { sound } from '../utils/audio';
 import { speech } from '../utils/speech';
-
-interface GameContextType {
-  screen: ScreenType;
-  setScreen: (screen: ScreenType) => void;
-  mascot: Mascot;
-  setMascotId: (id: MascotId) => void;
-  inputMode: InputMode;
-  setInputMode: (mode: InputMode) => void;
-  theme: ThemeMode;
-  setTheme: (theme: ThemeMode) => void;
-  fontSize: FontSize;
-  setFontSize: (size: FontSize) => void;
-  isTtsEnabled: boolean;
-  setIsTtsEnabled: (enabled: boolean) => void;
-  isSoundEnabled: boolean;
-  setIsSoundEnabled: (enabled: boolean) => void;
-  worlds: WorldInfo[];
-  badges: BadgeItem[];
-  studentSession: StudentSession;
-  speakText: (text: string, force?: boolean) => void;
-  speakHover: (text: string) => void;
-  playSound: (type: 'click' | 'success' | 'encourage' | 'pop' | 'fanfare') => void;
-  triggerEncouragement: () => void;
-  recordMove: (isCorrect: boolean) => void;
-  completeLevel: (levelId: string, stars: number) => void;
-  unlockBadge: (badgeId: string) => void;
-  updateUDAReport: (code: string, isSuccess: boolean) => void;
-  isTeacherModalOpen: boolean;
-  setIsTeacherModalOpen: (open: boolean) => void;
-}
-
-const GameContext = createContext<GameContextType | undefined>(undefined);
+import { GameContext } from './gameContextDefinition';
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [screen, setScreen] = useState<ScreenType>('onboarding');
-  const [mascotId, setMascotIdState] = useState<MascotId>('robi');
-  const [inputMode, setInputModeState] = useState<InputMode>('touch');
+  const [activeTab, setActiveTabState] = useState<ActiveTab>('wordwall');
+  const [totalStars, setTotalStars] = useState<number>(12);
   const [theme, setTheme] = useState<ThemeMode>('normal');
-  const [fontSize, setFontSize] = useState<FontSize>('normal');
-  const [isTtsEnabled, setIsTtsEnabledState] = useState<boolean>(true);
   const [isSoundEnabled, setIsSoundEnabledState] = useState<boolean>(true);
-  const [worlds, setWorlds] = useState<WorldInfo[]>(INITIAL_WORLDS);
-  const [badges, setBadges] = useState<BadgeItem[]>(INITIAL_BADGES);
-  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState<boolean>(false);
+  const [isTtsEnabled, setIsTtsEnabledState] = useState<boolean>(true);
 
-  const [studentSession, setStudentSession] = useState<StudentSession>({
-    studentName: 'Ahmet (Öğrenci)',
-    timeSpentSeconds: 145,
-    correctMoves: 18,
-    encouragedMoves: 3,
-    voiceCommandsUsed: 4,
-    gestureMovesUsed: 6,
-    gamesFinished: 4,
-    badges: INITIAL_BADGES,
-    udaReports: INITIAL_UDA_REPORTS,
-  });
+  const [shadowItems, setShadowItems] = useState<ShadowItem[]>(INITIAL_SHADOW_ITEMS);
+  const [mapLevels, setMapLevels] = useState<MapLevel[]>(INITIAL_MAP_LEVELS);
+  const [currentMapLevelIndex, setCurrentMapLevelIndex] = useState<number>(0);
+  const [bepStats, setBepStats] = useState<BEPStat[]>(INITIAL_BEP_STATS);
 
-  const mascot = MASCOTS.find((m) => m.id === mascotId) || MASCOTS[0];
-
-  // Timer for session duration
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setStudentSession((prev) => ({
-        ...prev,
-        timeSpentSeconds: prev.timeSpentSeconds + 1,
-      }));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Update theme class on HTML element
+  // Yüksek kontrast temasını <html> etiketine uygula
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('theme-contrast-yellow', 'theme-contrast-blue');
@@ -95,9 +40,9 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [theme]);
 
-  const setIsTtsEnabled = (enabled: boolean) => {
-    setIsTtsEnabledState(enabled);
-    speech.setTtsEnabled(enabled);
+  const setActiveTab = (tab: ActiveTab) => {
+    setActiveTabState(tab);
+    sound.playClick();
   };
 
   const setIsSoundEnabled = (enabled: boolean) => {
@@ -105,44 +50,44 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     sound.setSoundEnabled(enabled);
   };
 
-  const setMascotId = (id: MascotId) => {
-    setMascotIdState(id);
-    const chosen = MASCOTS.find((m) => m.id === id);
-    if (chosen) {
-      sound.playClick();
-      speech.speak(`${chosen.name} seçildi! ${chosen.greeting}`);
+  const setIsTtsEnabled = (enabled: boolean) => {
+    setIsTtsEnabledState(enabled);
+    speech.setTtsEnabled(enabled);
+  };
+
+  // Konfeti ve kutlama efekti
+  const triggerCelebration = () => {
+    sound.playSuccess();
+    try {
+      confetti({
+        particleCount: 70,
+        spread: 80,
+        origin: { y: 0.6 },
+        colors: ['#38bdf8', '#fbbf24', '#34d399', '#f43f5e', '#a855f7'],
+        disableForReducedMotion: true,
+      });
+    } catch {
+      // ignore
     }
   };
 
-  const setInputMode = (mode: InputMode) => {
-    setInputModeState(mode);
-    sound.playClick();
-    if (mode === 'gesture') {
-      speech.speak('El Hareketi ve Kamera Modu açıldı! Sanal imleç ekranınızda.');
-      unlockBadge('badge-gesture');
-    } else if (mode === 'voice') {
-      speech.speak('Sesli Komut Modu açıldı! Mikrofona konuşarak kontrol edebilirsiniz.');
-      unlockBadge('badge-voice');
-    } else {
-      speech.speak('Dokunmatik ve Fare Modu devrede.');
-    }
+  // Yıldız artırımı
+  const addStars = (count: number) => {
+    setTotalStars((prev) => prev + count);
+    triggerCelebration();
   };
 
-  const speakText = (text: string, force: boolean = false) => {
-    speech.speak(text, force);
-  };
-
-  // Hover to speak: Debounced slightly to prevent overlapping bursts
-  let hoverTimeout: any = null;
-  const speakHover = (text: string) => {
-    if (!isTtsEnabled) return;
-    if (hoverTimeout) clearTimeout(hoverTimeout);
-    hoverTimeout = setTimeout(() => {
+  // Sesli yönerge
+  const speak = (text: string) => {
+    if (isTtsEnabled) {
       speech.speak(text);
-    }, 150);
+    }
   };
 
-  const playSound = (type: 'click' | 'success' | 'encourage' | 'pop' | 'fanfare') => {
+  // Ses efektleri
+  const playSfx = (
+    type: 'click' | 'success' | 'encourage' | 'pop' | 'fanfare' | 'step' | 'jump' | 'spin' | 'glow'
+  ) => {
     if (!isSoundEnabled) return;
     switch (type) {
       case 'click':
@@ -160,152 +105,81 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       case 'fanfare':
         sound.playFanfare();
         break;
+      case 'step':
+        sound.playStep();
+        break;
+      case 'jump':
+        sound.playJump();
+        break;
+      case 'spin':
+        sound.playSpin();
+        break;
+      case 'glow':
+        sound.playHintGlow();
+        break;
     }
   };
 
-  // Teşvik edici geri bildirim (Cezasız pedagoji)
-  const triggerEncouragement = () => {
-    playSound('encourage');
-    const randomMsg =
-      mascot.encouragement[Math.floor(Math.random() * mascot.encouragement.length)];
-    speakText(randomMsg, true);
-    setStudentSession((prev) => ({
-      ...prev,
-      encouragedMoves: prev.encouragedMoves + 1,
-    }));
+  // Öğretmen Stüdyosundan yeni gölge kartı ekleme
+  const addCustomShadowItem = (item: ShadowItem) => {
+    setShadowItems((prev) => [item, ...prev]);
+    recordBEPProgress('UDA 1', true);
   };
 
-  const recordMove = (isCorrect: boolean) => {
-    setStudentSession((prev) => ({
-      ...prev,
-      correctMoves: isCorrect ? prev.correctMoves + 1 : prev.correctMoves,
-      encouragedMoves: !isCorrect ? prev.encouragedMoves + 1 : prev.encouragedMoves,
-    }));
+  // Öğretmen Stüdyosundan özel harita yayınlama
+  const publishCustomMap = (newLevel: MapLevel) => {
+    setMapLevels((prev) => [newLevel, ...prev]);
+    setCurrentMapLevelIndex(0);
+    recordBEPProgress('UDA 2', true);
   };
 
-  const unlockBadge = (badgeId: string) => {
-    setBadges((prev) =>
-      prev.map((b) =>
-        b.id === badgeId && !b.isUnlocked
-          ? { ...b, isUnlocked: true, unlockedAt: 'Şimdi' }
-          : b
-      )
-    );
-  };
-
-  const updateUDAReport = (code: string, isSuccess: boolean) => {
-    setStudentSession((prev) => {
-      const updated = prev.udaReports.map((report) => {
-        if (report.code === code) {
-          const attempts = report.attempts + 1;
-          const successes = isSuccess ? report.successes + 1 : report.successes;
-          const ratio = successes / attempts;
-          const status: 'achieved' | 'developing' | 'initial' =
-            ratio >= 0.6 && successes >= 3
-              ? 'achieved'
-              : ratio >= 0.4
-              ? 'developing'
-              : 'initial';
+  // BEP Kazanımını güncelle
+  const recordBEPProgress = (code: 'UDA 1' | 'UDA 2' | 'UDA 3', isSuccess: boolean) => {
+    setBepStats((prev) =>
+      prev.map((item) => {
+        if (item.code === code) {
+          const newSuccess = isSuccess ? item.successCount + 1 : item.successCount;
+          const newAttempt = item.attemptCount + 1;
+          const ratio = newSuccess / newAttempt;
           return {
-            ...report,
-            attempts,
-            successes,
-            status,
+            ...item,
+            successCount: newSuccess,
+            attemptCount: newAttempt,
+            criterionMet: ratio >= 0.6 && newAttempt >= 2,
           };
         }
-        return report;
-      });
-      return { ...prev, udaReports: updated };
-    });
-  };
-
-  const completeLevel = (levelId: string, stars: number) => {
-    setWorlds((prevWorlds) =>
-      prevWorlds.map((world) => {
-        const hasLevel = world.levels.some((l) => l.id === levelId);
-        if (!hasLevel) return world;
-
-        const updatedLevels = world.levels.map((lvl) => {
-          if (lvl.id === levelId) {
-            return {
-              ...lvl,
-              stars: Math.max(lvl.stars, stars),
-              isCompleted: true,
-            };
-          }
-          return lvl;
-        });
-
-        // Bir sonraki seviyenin kilidini aç
-        const currentIndex = updatedLevels.findIndex((l) => l.id === levelId);
-        if (currentIndex !== -1 && currentIndex + 1 < updatedLevels.length) {
-          updatedLevels[currentIndex + 1].isLocked = false;
-        }
-
-        return {
-          ...world,
-          levels: updatedLevels,
-        };
+        return item;
       })
     );
-
-    setStudentSession((prev) => ({
-      ...prev,
-      gamesFinished: prev.gamesFinished + 1,
-    }));
-
-    if (levelId.startsWith('w1')) {
-      unlockBadge('badge-history');
-    } else if (levelId.startsWith('w2')) {
-      unlockBadge('badge-hardware');
-    } else if (levelId.startsWith('w3')) {
-      unlockBadge('badge-art');
-    } else if (levelId.startsWith('w4')) {
-      unlockBadge('badge-network');
-    }
   };
 
   return (
     <GameContext.Provider
       value={{
-        screen,
-        setScreen,
-        mascot,
-        setMascotId,
-        inputMode,
-        setInputMode,
+        activeTab,
+        setActiveTab,
+        totalStars,
+        addStars,
         theme,
         setTheme,
-        fontSize,
-        setFontSize,
-        isTtsEnabled,
-        setIsTtsEnabled,
         isSoundEnabled,
         setIsSoundEnabled,
-        worlds,
-        badges,
-        studentSession,
-        speakText,
-        speakHover,
-        playSound,
-        triggerEncouragement,
-        recordMove,
-        completeLevel,
-        unlockBadge,
-        updateUDAReport,
-        isTeacherModalOpen,
-        setIsTeacherModalOpen,
+        isTtsEnabled,
+        setIsTtsEnabled,
+        shadowItems,
+        addCustomShadowItem,
+        mapLevels,
+        currentMapLevelIndex,
+        setCurrentMapLevelIndex,
+        publishCustomMap,
+        bepStats,
+        recordBEPProgress,
+        triggerCelebration,
+        speak,
+        playSfx,
       }}
     >
       {children}
     </GameContext.Provider>
   );
-};
-
-export const useGame = () => {
-  const context = useContext(GameContext);
-  if (!context) {
-    throw new Error('useGame must be used within a GameProvider');
-  }
-  return context;
 };

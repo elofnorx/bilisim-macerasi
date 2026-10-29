@@ -1,86 +1,100 @@
-export type MascotId = 'robi' | 'owl' | 'star';
+// MEB Özel Eğitim Bilişim Teknolojileri BEP Portalı Tip Tanımları
 
-export interface Mascot {
-  id: MascotId;
-  name: string;
-  subtitle: string;
-  avatarEmoji: string;
-  svgColor: string;
-  greeting: string;
-  encouragement: string[];
-}
+export type ActiveTab = 'wordwall' | 'maze' | 'scratchjr' | 'teacher';
 
-export type InputMode = 'touch' | 'gesture' | 'voice';
+export type WordwallSubGame = 'shadow' | 'wheel' | 'matching';
 
 export type ThemeMode = 'normal' | 'contrast-yellow' | 'contrast-blue';
 
-export type FontSize = 'normal' | 'large' | 'huge';
-
-export type ScreenType =
-  | 'onboarding'
-  | 'map'
-  | 'game-hardware'
-  | 'game-keyboard'
-  | 'game-time-machine'
-  | 'game-input-output'
-  | 'game-digital-canvas'
-  | 'game-network-builder';
-
-export interface LevelInfo {
+// Wordwall: Gölge Eşleştirme Öğesi
+export interface ShadowItem {
   id: string;
-  worldId: number;
-  number: number;
-  title: string;
-  description: string;
-  iconName: string;
-  stars: number; // 0 to 3
-  isCompleted: boolean;
-  isLocked: boolean;
-  targetScreen?: ScreenType;
+  name: string;
+  emoji: string;
+  color: string;
+  shadowSilhouetteId: string;
 }
 
-export interface WorldInfo {
-  id: number;
-  udaCode: string; // örn: UDA 1, UDA 2, UDA 3, UDA 4
+// Wordwall: Şans Çarkıfeleği Görevi
+export interface WheelTask {
+  id: string;
+  title: string;
+  icon: string;
+  color: string;
+  rewardStars: number;
+}
+
+// Wordwall: Sürükle-Bırak Eşleştirme Öğesi & Hedef Kutusu
+export interface DragItem {
+  id: string;
   name: string;
-  tagline: string;
-  emoji: string;
+  icon: string;
+  targetCategory: string; // örn: 'ekran', 'klavye', 'fare', 'kasa'
+  color: string;
+}
+
+export interface TargetBox {
+  id: string;
+  category: string;
+  title: string;
+  icon: string;
+  color: string;
+}
+
+// Labirent & Kodlama Harita Hücre Tipleri
+export type CellType = 'empty' | 'obstacle' | 'start' | 'target';
+
+export interface GridCoord {
+  x: number;
+  y: number;
+}
+
+export interface MapLevel {
+  id: string;
+  title: string;
+  gridSize: number; // varsayılan 5
+  start: GridCoord;
+  target: GridCoord;
+  obstacles: GridCoord[];
+}
+
+// ScratchJr Simgesel Komut Blokları
+export type ScratchCommandType =
+  | 'start'      // 🟢 [Başlat / Yeşil Bayrak]
+  | 'right'      // ➡️ [Sağ Ok]
+  | 'left'       // ⬅️ [Sol Ok]
+  | 'up'         // ⬆️ [Yukarı Ok]
+  | 'down'       // ⬇️ [Aşağı Ok]
+  | 'jump';      // 🦘 [Zıpla / Engel Geç]
+
+export interface ScratchBlockDef {
+  type: ScratchCommandType;
+  label: string;
+  symbol: string;
   bgColor: string;
   borderColor: string;
-  accentColor: string;
-  isUnlocked: boolean;
-  levels: LevelInfo[];
+  textColor: string;
 }
 
-export interface BadgeItem {
+export interface ProgrammedBlock {
+  uid: string;
+  type: ScratchCommandType;
+}
+
+// Öğretmen Stüdyosu Şablon Nesnesi
+export interface CustomTeacherObject {
   id: string;
-  title: string;
-  description: string;
+  name: string;
   emoji: string;
-  isUnlocked: boolean;
-  unlockedAt?: string;
-  category: 'hardware' | 'keyboard' | 'accessibility' | 'master' | 'art' | 'network' | 'history';
+  color: string;
 }
 
-export interface UDAReport {
-  code: string; // 'UDA 1', 'UDA 2', 'UDA 3', 'UDA 4'
+// BEP Kazanım İlerleme İstatistikleri
+export interface BEPStat {
+  code: string; // 'UDA 1', 'UDA 2', 'UDA 3'
   title: string;
-  learningOutcome: string;
-  attempts: number;
-  successes: number;
-  targetCriteria: string; // '3/5 Ölçütü (En az %60 Başarı)'
-  status: 'achieved' | 'developing' | 'initial';
-  notes: string;
-}
-
-export interface StudentSession {
-  studentName: string;
-  timeSpentSeconds: number;
-  correctMoves: number;
-  encouragedMoves: number; // Gentle retry attempts
-  voiceCommandsUsed: number;
-  gestureMovesUsed: number;
-  gamesFinished: number;
-  badges: BadgeItem[];
-  udaReports: UDAReport[];
+  bepOutcome: string;
+  successCount: number;
+  attemptCount: number;
+  criterionMet: boolean;
 }

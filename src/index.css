@@ -2,12 +2,12 @@
 
 @layer base {
   :root {
-    --bg-primary: #f0f9ff;
+    --bg-primary: #f8fafc;
     --text-primary: #1e293b;
   }
 }
 
-/* Yüksek Kontrast Temaları */
+/* Yüksek Kontrast Temaları (WCAG AAA) */
 .theme-contrast-yellow {
   --bg-primary: #000000;
   --text-primary: #ffff00;
@@ -17,6 +17,8 @@
 
 .theme-contrast-yellow * {
   border-color: #ffff00 !important;
+  background-color: #000000 !important;
+  color: #ffff00 !important;
 }
 
 .theme-contrast-blue {
@@ -37,4 +39,24 @@
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
+}
+
+/* Yumuşak animasyonlar */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.25s ease-in-out;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
 }
