@@ -65,6 +65,14 @@ export const VoiceCommandOverlay: React.FC = () => {
     if (cmd.includes('yardım') || cmd.includes('ne yapmalıyım')) {
       if (screen === 'game-hardware') {
         speakText('Donanım parçalarını ekranın sağındaki doğru kutulara yerleştirin.');
+      } else if (screen === 'game-time-machine') {
+        speakText('Eski bir teknolojiye tıkla, sonra modern karşılığıyla eşleştir.');
+      } else if (screen === 'game-input-output') {
+        speakText('Donanım parçasına dokunup Girdi veya Çıktı sepetine gönderin.');
+      } else if (screen === 'game-digital-canvas') {
+        speakText('Fırçayı seçip tuval üzerine dokunarak resim çizebilirsiniz.');
+      } else if (screen === 'game-network-builder') {
+        speakText('Cihazlara dokunarak modeme Wi-Fi ile bağlayın.');
       } else if (screen === 'game-keyboard') {
         speakText('Uçan harf balonuna basmak için o harfi söyleyin veya klavyeden basın.');
       } else {
@@ -147,7 +155,7 @@ export const VoiceCommandOverlay: React.FC = () => {
           </button>
         </div>
 
-        {/* Hızlı Simülasyon Butonları (Mikrofon izni olmayan veya test eden kullanıcılar için) */}
+        {/* Hızlı Simülasyon Butonları */}
         <div className="flex items-center gap-2 overflow-x-auto py-1 text-xs">
           <span className="text-slate-400 shrink-0 font-medium text-[11px]">Hızlı Ses Testi:</span>
           {screen === 'onboarding' && (
@@ -172,39 +180,75 @@ export const VoiceCommandOverlay: React.FC = () => {
               >
                 🗣️ "Kasa"
               </button>
+            </>
+          )}
+          {screen === 'game-input-output' && (
+            <>
               <button
-                onClick={() => simulateCommand('klavye')}
+                onClick={() => simulateCommand('mikrofon')}
                 className="px-2.5 py-1 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white font-semibold transition-colors shrink-0"
               >
-                🗣️ "Klavye"
+                🗣️ "Mikrofon"
               </button>
               <button
-                onClick={() => simulateCommand('fare')}
-                className="px-2.5 py-1 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white font-semibold transition-colors shrink-0"
+                onClick={() => simulateCommand('girdi')}
+                className="px-2.5 py-1 bg-sky-600 hover:bg-sky-500 rounded-lg text-white font-semibold transition-colors shrink-0"
               >
-                🗣️ "Fare"
+                🗣️ "Girdi"
+              </button>
+              <button
+                onClick={() => simulateCommand('çıktı')}
+                className="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 rounded-lg text-white font-semibold transition-colors shrink-0"
+              >
+                🗣️ "Çıktı"
               </button>
             </>
           )}
-          {screen === 'game-keyboard' && (
+          {screen === 'game-time-machine' && (
             <>
               <button
-                onClick={() => simulateCommand('a')}
-                className="px-2.5 py-1 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white font-semibold transition-colors shrink-0"
+                onClick={() => simulateCommand('telefon')}
+                className="px-2.5 py-1 bg-amber-700 hover:bg-amber-600 rounded-lg text-white font-semibold transition-colors shrink-0"
               >
-                🗣️ "A"
+                🗣️ "Telefon"
               </button>
               <button
-                onClick={() => simulateCommand('b')}
+                onClick={() => simulateCommand('okul')}
                 className="px-2.5 py-1 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white font-semibold transition-colors shrink-0"
               >
-                🗣️ "B"
+                🗣️ "Okul"
+              </button>
+            </>
+          )}
+          {screen === 'game-digital-canvas' && (
+            <>
+              <button
+                onClick={() => simulateCommand('fırça')}
+                className="px-2.5 py-1 bg-purple-700 hover:bg-purple-600 rounded-lg text-white font-semibold transition-colors shrink-0"
+              >
+                🗣️ "Fırça"
               </button>
               <button
-                onClick={() => simulateCommand('k')}
-                className="px-2.5 py-1 bg-indigo-700 hover:bg-indigo-600 rounded-lg text-white font-semibold transition-colors shrink-0"
+                onClick={() => simulateCommand('silgi')}
+                className="px-2.5 py-1 bg-purple-700 hover:bg-purple-600 rounded-lg text-white font-semibold transition-colors shrink-0"
               >
-                🗣️ "K"
+                🗣️ "Silgi"
+              </button>
+            </>
+          )}
+          {screen === 'game-network-builder' && (
+            <>
+              <button
+                onClick={() => simulateCommand('bilgisayar')}
+                className="px-2.5 py-1 bg-sky-700 hover:bg-sky-600 rounded-lg text-white font-semibold transition-colors shrink-0"
+              >
+                🗣️ "Bilgisayar"
+              </button>
+              <button
+                onClick={() => simulateCommand('tablet')}
+                className="px-2.5 py-1 bg-sky-700 hover:bg-sky-600 rounded-lg text-white font-semibold transition-colors shrink-0"
+              >
+                🗣️ "Tablet"
               </button>
             </>
           )}
@@ -222,15 +266,15 @@ export const VoiceCommandOverlay: React.FC = () => {
           </button>
         </div>
 
-        {/* Yardım Kutusu Açılırsa */}
+        {/* Yardım Kutusu */}
         {showHelp && (
           <div className="mt-2 pt-2 border-t border-indigo-800 text-xs text-indigo-200 grid grid-cols-2 sm:grid-cols-3 gap-2">
             <div>• <strong className="text-white">"Harita":</strong> Yol haritasına döner.</div>
             <div>• <strong className="text-white">"Başla":</strong> Macerayı başlatır.</div>
             <div>• <strong className="text-white">"Öğretmen":</strong> İlerleme panelini açar.</div>
-            <div>• <strong className="text-white">"Yardım":</strong> Yönergeyi sesli okur.</div>
-            <div>• <strong className="text-white">Parça İsimleri:</strong> Parçayı otomatik yerleştirir.</div>
-            <div>• <strong className="text-white">Harf Söyle:</strong> Havada uçan harfi patlatır.</div>
+            <div>• <strong className="text-white">"Girdi / Çıktı":</strong> Donanımı ayırır.</div>
+            <div>• <strong className="text-white">"Fırça / Silgi":</strong> Çizim aracını değiştirir.</div>
+            <div>• <strong className="text-white">"Bağla":</strong> Wi-Fi ağına bağlar.</div>
           </div>
         )}
       </div>

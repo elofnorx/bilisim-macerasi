@@ -11,7 +11,7 @@ import type {
   BadgeItem,
   StudentSession,
 } from '../types';
-import { MASCOTS, INITIAL_WORLDS, INITIAL_BADGES } from '../data/initialData';
+import { MASCOTS, INITIAL_WORLDS, INITIAL_BADGES, INITIAL_UDA_REPORTS } from '../data/initialData';
 import { sound } from '../utils/audio';
 import { speech } from '../utils/speech';
 
@@ -40,6 +40,7 @@ interface GameContextType {
   recordMove: (isCorrect: boolean) => void;
   completeLevel: (levelId: string, stars: number) => void;
   unlockBadge: (badgeId: string) => void;
+  updateUDAReport: (code: string, isSuccess: boolean) => void;
   isTeacherModalOpen: boolean;
   setIsTeacherModalOpen: (open: boolean) => void;
 }
@@ -60,13 +61,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const [studentSession, setStudentSession] = useState<StudentSession>({
     studentName: 'Ahmet (Öğrenci)',
-    timeSpentSeconds: 0,
-    correctMoves: 6,
-    encouragedMoves: 2,
-    voiceCommandsUsed: 0,
-    gestureMovesUsed: 0,
-    gamesFinished: 1,
+    timeSpentSeconds: 145,
+    correctMoves: 18,
+    encouragedMoves: 3,
+    voiceCommandsUsed: 4,
+    gestureMovesUsed: 6,
+    gamesFinished: 4,
     badges: INITIAL_BADGES,
+    udaReports: INITIAL_UDA_REPORTS,
   });
 
   const mascot = MASCOTS.find((m) => m.id === mascotId) || MASCOTS[0];
@@ -161,7 +163,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Teşvik edici geri bildirim
+  // Teşvik edici geri bildirim (Cezasız pedagoji)
   const triggerEncouragement = () => {
     playSound('encourage');
     const randomMsg =
@@ -189,6 +191,32 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           : b
       )
     );
+  };
+
+  const updateUDAReport = (code: string, isSuccess: boolean) => {
+    setStudentSession((prev) => {
+      const updated = prev.udaReports.map((report) => {
+        if (report.code === code) {
+          const attempts = report.attempts + 1;
+          const successes = isSuccess ? report.successes + 1 : report.successes;
+          const ratio = successes / attempts;
+          const status: 'achieved' | 'developing' | 'initial' =
+            ratio >= 0.6 && successes >= 3
+              ? 'achieved'
+              : ratio >= 0.4
+              ? 'developing'
+              : 'initial';
+          return {
+            ...report,
+            attempts,
+            successes,
+            status,
+          };
+        }
+        return report;
+      });
+      return { ...prev, udaReports: updated };
+    });
   };
 
   const completeLevel = (levelId: string, stars: number) => {
@@ -226,10 +254,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       gamesFinished: prev.gamesFinished + 1,
     }));
 
-    if (levelId === 'w1-l1') {
+    if (levelId.startsWith('w1')) {
+      unlockBadge('badge-history');
+    } else if (levelId.startsWith('w2')) {
       unlockBadge('badge-hardware');
-    } else if (levelId === 'w2-l1') {
-      unlockBadge('badge-keyboard');
+    } else if (levelId.startsWith('w3')) {
+      unlockBadge('badge-art');
+    } else if (levelId.startsWith('w4')) {
+      unlockBadge('badge-network');
     }
   };
 
@@ -260,6 +292,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         recordMove,
         completeLevel,
         unlockBadge,
+        updateUDAReport,
         isTeacherModalOpen,
         setIsTeacherModalOpen,
       }}

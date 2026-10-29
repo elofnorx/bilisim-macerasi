@@ -14,6 +14,12 @@ import {
   ShieldCheck,
   Cpu,
   Award,
+  History,
+  Building2,
+  ArrowLeftRight,
+  Palette,
+  Layers,
+  Wifi,
 } from 'lucide-react';
 import type { LevelInfo } from '../types';
 
@@ -22,6 +28,18 @@ export const MapScreen: React.FC = () => {
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
+      case 'History':
+        return <History className="w-6 h-6" />;
+      case 'Building2':
+        return <Building2 className="w-6 h-6" />;
+      case 'ArrowLeftRight':
+        return <ArrowLeftRight className="w-6 h-6" />;
+      case 'Palette':
+        return <Palette className="w-6 h-6" />;
+      case 'Layers':
+        return <Layers className="w-6 h-6" />;
+      case 'Wifi':
+        return <Wifi className="w-6 h-6" />;
       case 'Monitor':
         return <Monitor className="w-6 h-6" />;
       case 'MousePointerClick':
@@ -66,13 +84,13 @@ export const MapScreen: React.FC = () => {
         <div className="relative z-10 space-y-2">
           <div className="inline-flex items-center gap-2 bg-indigo-700/80 px-3 py-1 rounded-full text-xs font-bold text-amber-300">
             <Sparkles className="w-4 h-4" />
-            <span>İnteraktif Macera Yolculuğu</span>
+            <span>MEB Özel Eğitim Bilişim Teknolojileri ve Yazılım Müfredatı</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-black font-heading tracking-tight">
             Bilişim Dünyaları Haritası 🗺️
           </h1>
           <p className="text-sm sm:text-base text-indigo-100 max-w-xl">
-            Adaları sırayla keşfet, seviyelerdeki görevleri tamamla ve parlayan altın yıldızları topla!
+            UDA 1'den UDA 4'e kadar her modüldeki görevleri tamamla, altın yıldızları ve rozetleri topla!
           </p>
         </div>
 
@@ -84,7 +102,7 @@ export const MapScreen: React.FC = () => {
               {mascot.name} diyor ki:
             </div>
             <div className="text-sm font-semibold text-white">
-              "1. Dünya'daki Donanım Eşleştirme oyununa başlayalım mı?"
+              "Bugün hangi modülü keşfetmek istersin? Bir seviye seç!"
             </div>
           </div>
         </div>
@@ -93,8 +111,8 @@ export const MapScreen: React.FC = () => {
         <div className="absolute -right-12 -bottom-12 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
       </div>
 
-      {/* 3 Ana Dünya Listesi */}
-      <div className="space-y-12">
+      {/* 4 Ana MEB Modülü Listesi */}
+      <div className="space-y-10">
         {worlds.map((world) => {
           return (
             <div
@@ -111,8 +129,11 @@ export const MapScreen: React.FC = () => {
                   <span className="text-5xl filter drop-shadow">{world.emoji}</span>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-white shadow-sm border border-slate-200 text-slate-700">
-                        {world.id}. Dünya
+                      <span className="text-xs font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-indigo-900 text-white shadow-sm">
+                        {world.udaCode}
+                      </span>
+                      <span className="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-white text-slate-700 border border-slate-300">
+                        {world.id}. Modül
                       </span>
                       {!world.isUnlocked && (
                         <span className="flex items-center gap-1 text-xs font-bold text-slate-500 bg-slate-200 px-2 py-0.5 rounded-full">
@@ -120,7 +141,7 @@ export const MapScreen: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-0.5">
+                    <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
                       {world.name}
                     </h2>
                     <p className="text-sm text-slate-600 font-medium">{world.tagline}</p>
